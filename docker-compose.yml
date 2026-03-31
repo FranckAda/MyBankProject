@@ -1,0 +1,63 @@
+services:
+  # ─── Service 1 : Frontend React
+
+  frontend:
+    build:
+      context: ./frontend # Docker va chercher le Dockerfile dans ce dossier
+    ports:
+      - "3000:80" # port de votre machine : port dans le conteneur
+        # → http://localhost:3000 → port 80 de nginx
+    depends_on:
+      - backend # le frontend démarre APRÈS le backend
+    networks:
+      - mybank-net # rejoint le réseau interne
+
+  # ─── Service 2 : Backend Symfony
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:9000"
+    environment:
+      # Variable d'environnement que Symfony lit pour se connecter à MySQL
+      DATABASE_URL: "mysql://mybank:secret@db:3306/mybank?serverVersion=8.0.41&charset=utf8mb4"
+      #                                      ↑ 'db' = nom du service MySQL ci-dessous
+      APP_ENV: dev
+    depends_on:
+      db:
+        condition: service_healthy # attend que MySQL soit vraiment prêt
+    volumes:
+      - ./backend:/var/www/html # votre code local → visible dans le conteneur
+    networks:
+      - mybank-net
+
+  # ─── Service 3 : Base de données MySQL
+
+  db:
+    image: mysql:8.0 # on utilise l'image officielle, pas de Dockerfile
+    environment:
+      MYSQL_DATABASE: mybank # crée automatiquement la base 'mybank'
+      MYSQL_USER: mybank # crée l'utilisateur
+      MYSQL_PASSWORD: secret # son mot de passe
+      MYSQL_ROOT_PASSWORD: rootsecret
+    volumes:
+      - db-data:/var/lib/mysql # stocke les données HORS du conteneur → persistant
+    healthcheck:
+      # Docker attend que MySQL réponde VRAIMENT avant de démarrer le backend
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
+    networks:
+      - mybank-net
+
+# ─── Volumes nommés (les données survivent aux redémarrages)
+
+volumes:
+  db-data:
+
+# ─── Réseau interne (les services se voient entre eux)
+
+networks:
+  mybank-net:
+    driver: bridge
