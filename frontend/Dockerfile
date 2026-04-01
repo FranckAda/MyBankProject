@@ -21,7 +21,7 @@ RUN npm run build
 # ↑ Compile l'application React en fichiers HTML/CSS/JS statiques dans /app/dist 
 
 
-# ─── STAGE 2 : on sert le résultat 
+# ─── STAGE 2 : on sert le résultat
 FROM nginx:alpine 
 # ↑ Nouvelle image propre : juste un serveur web Nginx, sans Node.js 
 # ↑ L'image finale sera beaucoup plus légère (~20 Mo au lieu de ~400 Mo) 
