@@ -7,6 +7,8 @@ services:
     ports:
       - "3000:80" # port de votre machine : port dans le conteneur
         # → http://localhost:3000 → port 80 de nginx
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - backend # le frontend démarre APRÈS le backend
     networks:
@@ -17,8 +19,6 @@ services:
   backend:
     build:
       context: ./backend
-    ports:
-      - "8000:9000"
     environment:
       # Variable d'environnement que Symfony lit pour se connecter à MySQL
       DATABASE_URL: "mysql://mybank:secret@db:3306/mybank?serverVersion=8.0.41&charset=utf8mb4"
@@ -38,7 +38,7 @@ services:
     image: mysql:8.0 # on utilise l'image officielle, pas de Dockerfile
     environment:
       MYSQL_DATABASE: mybank # crée automatiquement la base 'mybank'
-      MYSQL_USER: mybank # crée l'utilisateur
+      MYSQL_USER: root # crée l'utilisateur
       MYSQL_PASSWORD: secret # son mot de passe
       MYSQL_ROOT_PASSWORD: rootsecret
     volumes:
@@ -50,7 +50,31 @@ services:
       retries: 5
     networks:
       - mybank-net
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: rootsecret
+    depends_on:
+      - db
+    networks:
+      - mybank-net
 
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www/html
+      - ./backend/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+    networks:
+      - mybank-net
 # ─── Volumes nommés (les données survivent aux redémarrages)
 
 volumes:
