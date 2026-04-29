@@ -44,8 +44,56 @@ jobs:
         # ↑ Si une règle ESLint est violée, le pipeline s'arrête ici en rouge
 
       # ÉTAPE 6 : Exécuter les tests Vitest
-      - name: Tests Vitest 
-        run: npm run test -- --reporter=verbose 
+      - name: Tests Vitest
+        run: npm run test -- --reporter=verbose
         working-directory: frontend
         # ↑ '--watchAll=false' : pas de mode interactif (nécessaire en CI)
         # ↑ '--ci' : le test échoue si un snapshot est obsolèt
+  backend-tests:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: mybank_test
+          MYSQL_USER: mybank
+          MYSQL_PASSWORD: secret
+          MYSQL_ROOT_PASSWORD: rootsecret
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-retries=5
+          --health-timeout=5s
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: pdo, pdo_mysql
+
+      - name: Créer le fichier .env
+        run: cp .env.test .env
+        working-directory: backend
+
+      - name: Install dépendances Composer
+        run: composer install --no-interaction
+        working-directory: backend
+
+      - name: Créer le schéma de test
+        run: |
+          php bin/console doctrine:database:drop --env=test --force --if-exists
+          php bin/console doctrine:database:create --env=test --if-not-exists
+          php bin/console doctrine:schema:create --env=test
+        working-directory: backend
+        env:
+          DATABASE_URL: "mysql://root:rootsecret@127.0.0.1:3306/mybank?serverVersion=8.0&charset=utf8mb4"
+      - name: Tests PHPUnit
+        run: php bin/phpunit
+        working-directory: backend
+        env:
+          DATABASE_URL: "mysql://root:rootsecret@127.0.0.1:3306/mybank?serverVersion=8.0&charset=utf8mb4"

@@ -36,6 +36,8 @@ services:
 
   db:
     image: mysql:8.0 # on utilise l'image officielle, pas de Dockerfile
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_DATABASE: mybank # crée automatiquement la base 'mybank'
       MYSQL_USER: root # crée l'utilisateur
