@@ -35,18 +35,17 @@ services:
   # ─── Service 3 : Base de données MySQL
 
   db:
-    image: mysql:8.0 # on utilise l'image officielle, pas de Dockerfile
+    image: mysql:8.0
     ports:
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: mybank # crée automatiquement la base 'mybank'
-      MYSQL_USER: root # crée l'utilisateur
-      MYSQL_PASSWORD: secret # son mot de passe
+      MYSQL_DATABASE: mybank
+      MYSQL_USER: mybank 
+      MYSQL_PASSWORD: secret
       MYSQL_ROOT_PASSWORD: rootsecret
     volumes:
-      - db-data:/var/lib/mysql # stocke les données HORS du conteneur → persistant
+      - db-data:/var/lib/mysql
     healthcheck:
-      # Docker attend que MySQL réponde VRAIMENT avant de démarrer le backend
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 10s
       retries: 5
