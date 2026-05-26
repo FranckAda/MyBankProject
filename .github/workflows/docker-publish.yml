@@ -34,6 +34,6 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags:
+          tags: |
              ghcr.io/franckada/mybankproject-backend:latest
              ghcr.io/franckada/mybankproject-backend:${{ github.sha }}
