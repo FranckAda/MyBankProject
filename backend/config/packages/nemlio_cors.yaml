@@ -1,0 +1,3 @@
+yaml
+allow_origin: ['%env(CORS_ALLOW_ORIGIN)%']
+ 

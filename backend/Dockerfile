@@ -22,5 +22,5 @@ RUN rm .env
 
 # composer install lancera cache:clear automatiquement en prod
 
-EXPOSE 9000
-CMD ["php-fpm"] 
+EXPOSE 8000
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
