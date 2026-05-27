@@ -12,8 +12,15 @@ COPY . .
 ENV APP_ENV=prod
 ENV APP_DEBUG=0
 
-RUN composer install --no-dev --optimize-autoloader
+# Créer un .env vide juste pour satisfaire Symfony au build
+RUN touch .env
+
+RUN composer install --no-dev --optimize-autoloader --no-scripts
+
+# Nettoyer le .env factice
+RUN rm .env
+
 # composer install lancera cache:clear automatiquement en prod
 
-EXPOSE 9000
-CMD ["php-fpm"] 
+EXPOSE 8000
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
