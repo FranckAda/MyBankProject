@@ -26,3 +26,41 @@ jobs:
           REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]') 
           echo "repo=$REPO" >> $GITHUB_OUTPUT 
           echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+  # Build l'image backend depuis le dossier ./backend et la push sur GHCR
+      - name: Build & Push backend
+        uses: docker/build-push-action@v5  # Action officielle Docker pour build + push en une étape
+        with:
+          context: ./backend  
+          push: true  # push l'image après le build, sinon elle reste locale au runner
+          tags: |  # Le pipe | permet de mettre plusieurs tags sur la même image
+            ghcr.io/franckada/mybankproject-backend:latest
+            ghcr.io/franckada/mybankproject-backend:${{ steps.meta.outputs.sha }}
+ 
+      # Build l'image frontend depuis le dossier ./frontend et la push sur GHCR
+      - name: Build & Push frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend  
+          push: true
+          tags: |
+            ghcr.io/franckada/mybankproject-frontend:latest
+            ghcr.io/franckada/mybankproject-frontend:${{ steps.meta.outputs.sha }}
+ 
+  # ─── Job 2 : déployer sur la VM ──────────────
+  deploy:
+    needs: build-and-push  # ne démarre QUE si build-and-push a réussi
+    runs-on: ubuntu-latest
+    steps:
+      # Se connecte en SSH à la VM et exécute des commandes de déploiement
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3  # Action pour exécuter des commandes via SSH
+        with:
+          host: ${{ secrets.SERVER_HOST }}  # IP externe de la VM, stockée en secret GitHub
+          username: ${{ secrets.SERVER_USER }}  # Utilisateur SSH
+          key: ${{ secrets.SSH_PRIVATE_KEY }}  # Clé privée SSH, stockée en secret GitHub
+          script: |  # Le pipe | = bloc de commandes multi-lignes à exécuter sur la VM
+            cd ~/mybank  
+          # On va dans le dossier où se trouvent docker-compose.prod.yml et .env
+            docker compose -f docker-compose.prod.yml pull  # Pull les nouvelles images depuis GHCR (les tags "latest" qu'on vient de push)
+            docker compose -f docker-compose.prod.yml up -d  # Redémarre les conteneurs avec les nouvelles images en mode détaché (-d = background)
+            docker image prune -f  # Supprime les vieilles images inutilisées pour libérer le disque (-f = pas de confirmation)
