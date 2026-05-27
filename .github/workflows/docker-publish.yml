@@ -42,5 +42,9 @@ jobs:
           push: true
           tags: |
             ghcr.io/franckada/mybankproject-backend:latest
+<<<<<<< HEAD
             ghcr.io/franckada/mybankproject-backend:${{ steps.meta.outputs.sha }}
  
+=======
+            ghcr.io/franckada/mybankproject-backend:${{ steps.meta.outputs.sha }}
+>>>>>>> b61450ebb4801465e626f0232ede8dc4686cff94
