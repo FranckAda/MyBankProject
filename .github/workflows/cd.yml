@@ -59,8 +59,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}  # Utilisateur SSH
           key: ${{ secrets.SSH_PRIVATE_KEY }}  # Clé privée SSH, stockée en secret GitHub
           script: |  # Le pipe | = bloc de commandes multi-lignes à exécuter sur la VM
-            cd ~/mybank  
-          # On va dans le dossier où se trouvent docker-compose.prod.yml et .env
-            docker compose -f docker-compose.prod.yml pull  # Pull les nouvelles images depuis GHCR (les tags "latest" qu'on vient de push)
-            docker compose -f docker-compose.prod.yml up -d  # Redémarre les conteneurs avec les nouvelles images en mode détaché (-d = background)
-            docker image prune -f  # Supprime les vieilles images inutilisées pour libérer le disque (-f = pas de confirmation)
+            cd ~/mybank 
+            docker compose -f docker-compose.prod.yml pull  
+            docker compose -f docker-compose.prod.yml up -d  
+            docker image prune -f  
