@@ -79,7 +79,7 @@ describe("Header — lien actif", () => {
     renderHeader("/");
     const cardLinks = screen.getAllByRole("link", { name: /card/i });
     const activeLink = cardLinks.find(
-      (l) => l.getAttribute("aria-current") !== "page",
+      (l) => l.getAttribute("aria-current") === "page",
     );
     expect(activeLink).toBeFalsy();
   });
