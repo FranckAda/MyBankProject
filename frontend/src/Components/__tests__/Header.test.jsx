@@ -35,9 +35,7 @@ describe("Header — liens de navigation", () => {
     renderHeader();
     // Chaque label apparaît au moins une fois (sidebar + bottom nav)
     expect(screen.getAllByText("Home").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("Wallet").length).toBeGreaterThanOrEqual(
-      1,
-    );
+    expect(screen.getAllByText("Wallet").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("Card").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("Profile").length).toBeGreaterThanOrEqual(1);
   });
@@ -49,7 +47,7 @@ describe("Header — liens de navigation", () => {
 
     expect(hrefs).toContain("/");
     expect(hrefs).toContain("/wallet");
-    expect(hrefs).toContain("/card");
+    expect(hrefs).toContain("/upcoming");
     expect(hrefs).toContain("/profile");
   });
 });
@@ -63,9 +61,7 @@ describe("Header — lien actif", () => {
     // getAllByRole car le lien existe dans la sidebar ET la bottom nav
     const homeLinks = screen.getAllByRole("link", { name: /home/i });
     const activeLink = homeLinks.find(
-      (l) =>
-        l.className.includes("bg-teal-600") ||
-        l.className.includes("text-teal-600"),
+      (l) => l.getAttribute("aria-current") === "page",
     );
     expect(activeLink).toBeTruthy();
   });
@@ -74,9 +70,7 @@ describe("Header — lien actif", () => {
     renderHeader("/wallet");
     const walletLinks = screen.getAllByRole("link", { name: /wallet/i });
     const activeLink = walletLinks.find(
-      (l) =>
-        l.className.includes("bg-teal-600") ||
-        l.className.includes("text-teal-600"),
+      (l) => l.getAttribute("aria-current") === "page",
     );
     expect(activeLink).toBeTruthy();
   });
@@ -85,9 +79,7 @@ describe("Header — lien actif", () => {
     renderHeader("/");
     const cardLinks = screen.getAllByRole("link", { name: /card/i });
     const activeLink = cardLinks.find(
-      (l) =>
-        l.className.includes("bg-teal-600") ||
-        l.className.includes("text-teal-600"),
+      (l) => l.getAttribute("aria-current") !== "page",
     );
     expect(activeLink).toBeFalsy();
   });
