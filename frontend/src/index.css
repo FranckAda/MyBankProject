@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+/* Custom utility to hide number input arrows */
+@layer utilities {
+  .no-spinner {
+    /* Firefox */
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  .no-spinner::-webkit-outer-spin-button,
+  .no-spinner::-webkit-inner-spin-button {
+    /* Chrome, Safari, Edge, Opera */
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
