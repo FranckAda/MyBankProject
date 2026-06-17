@@ -1,9 +1,10 @@
 import { useEffect } from "react";
-import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "./Components/Home";
-import ExpenseForm from "./Components/ExpenseForm";
-import ExpenseList from "./Components/ExpenseList";
+import Dashboard from "./Components/Pages/Dashboard";
+import Upcoming from "./Components/Features/Upcoming";
+import Profile from "./Components/Pages/Profile";
+import Notif from "./Components/Pages/Notif";
+import Wallet from "./Components/Pages/Wallet";
 function App() {
   useEffect(() => {
     fetch("/api/health")
@@ -14,9 +15,13 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/expenses" element={<ExpenseForm />} />
-        <Route path="/expenlist" element={<ExpenseList />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/wallet" element={<Wallet />} />
+        <Route path="/upcoming" element={<Upcoming />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/notifications" element={<Notif/>}/>
+        <Route path="/profile/:id" element={<Profile />} />
+        <Route path="*" element={<div>Page Not Found</div>} />
       </Routes>
     </Router>
   );
