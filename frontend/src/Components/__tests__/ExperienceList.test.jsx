@@ -2,7 +2,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import ExpenseList from "../ExpenseList";
-
+import { House, ShoppingCart } from "lucide-react";
 describe("ExpenseList", () => {
   const mockExpenses = [
     {
@@ -11,6 +11,7 @@ describe("ExpenseList", () => {
       amount: 900,
       date: "2025-01-01",
       category: "Housing",
+      icon: House,
     },
     {
       id: 2,
@@ -18,6 +19,7 @@ describe("ExpenseList", () => {
       amount: 120,
       date: "2025-01-05",
       category: "Food",
+      icon: ShoppingCart,
     },
   ];
 

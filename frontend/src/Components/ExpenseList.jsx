@@ -1,49 +1,18 @@
-import { Briefcase, ShoppingCart, Train, Tv, Utensils } from "lucide-react";
 import PropTypes from "prop-types";
 
-const ExpenseList = () => {
-  const expenses = [
-    {
-      id: 1,
-      name: "Netflix",
-      date: "Aujourd'hui, 14:30",
-      amount: -13.99,
-      category: "Abonnement",
-      Icon: Tv,
-    },
-    {
-      id: 2,
-      name: "Salaire",
-      date: "Hier, 09:00",
-      amount: 1500.0,
-      category: "Revenu",
-      Icon: Briefcase,
-    },
-    {
-      id: 3,
-      name: "Carrefour",
-      date: "25 Avr",
-      amount: -45.6,
-      category: "Alimentation",
-      Icon: ShoppingCart,
-    },
-    {
-      id: 4,
-      name: "Transport",
-      date: "24 Avr",
-      amount: -35.0,
-      category: "Transport",
-      Icon: Train,
-    },
-    {
-      id: 5,
-      name: "Restaurant",
-      date: "23 Avr",
-      amount: -28.5,
-      category: "Loisirs",
-      Icon: Utensils,
-    },
-  ];
+/**
+ * @param {{
+ *   expenses: Array<{
+ *     id: string|number,
+ *     name: string,
+ *     date: string,
+ *     amount: number,
+ *     category: string,
+ *     Icon: any
+ *   }>
+ * }} props
+ */
+const ExpenseList = ({ expenses }) => {
   return (
     <>
       {expenses && expenses.length > 0 ? (
@@ -79,6 +48,10 @@ const ExpenseList = () => {
       )}
     </>
   );
+};
+
+ExpenseList.propTypes = {
+  expenses: PropTypes.array,
 };
 
 export default ExpenseList;

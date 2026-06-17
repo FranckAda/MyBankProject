@@ -1,4 +1,3 @@
-import { Briefcase, ShoppingCart, Train, Tv, Utensils } from "lucide-react";
 import ExpenseForm from "../ExpenseForm";
 import Header from "../Layout/Header";
 import TopBar from "../Layout/TopBar";
