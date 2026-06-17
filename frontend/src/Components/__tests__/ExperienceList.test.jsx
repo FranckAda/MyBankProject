@@ -2,24 +2,26 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import ExpenseList from "../ExpenseList";
-
+import { House, ShoppingCart } from "lucide-react";
 describe("ExpenseList", () => {
   const mockExpenses = [
-    {
-      id: 1,
-      label: "Loyer",
-      amount: 900,
-      date: "2025-01-01",
-      category: "Housing",
-    },
-    {
-      id: 2,
-      label: "Courses",
-      amount: 120,
-      date: "2025-01-05",
-      category: "Food",
-    },
-  ];
+  {
+    id: 1,
+    name: "Loyer",
+    amount: 900,
+    date: "2025-01-01",
+    category: "Housing",
+    Icon: House,
+  },
+  {
+    id: 2,
+    name: "Courses",
+    amount: 120,
+    date: "2025-01-05",
+    category: "Food",
+    Icon: ShoppingCart,
+  },
+];
 
   it("affiche toutes les dépenses passées en props", () => {
     render(<ExpenseList expenses={mockExpenses} />);
