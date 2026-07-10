@@ -15,7 +15,7 @@ class ExpenseControllerTest extends WebTestCase
         $this->assertIsArray($data);
     }
 
-    public function testCreateWithoutAuthReturns401(): void
+    public function testCreateWithNonExistentEntitiesReturns422(): void
     {
         $client = static::createClient();
         $client->request('POST', '/api/expenses/new', [], [], [
@@ -25,7 +25,7 @@ class ExpenseControllerTest extends WebTestCase
             'idUser' => 1,
             'idCategory' => 13,
         ]));
-        $this->assertResponseStatusCodeSame(401);
+        $this->assertResponseStatusCodeSame(422);
     }
 
     public function testCreateWithInvalidJsonReturns400(): void

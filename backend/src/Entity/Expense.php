@@ -56,7 +56,7 @@ class Expense
         return $this->idUser;
     }
 
-    public function setIdUser(Client $idUser): static
+    public function setIdUser(?Client $idUser): static
     {
         $this->idUser = $idUser;
 

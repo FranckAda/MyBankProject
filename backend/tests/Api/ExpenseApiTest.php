@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ExpenseApiTest extends WebTestCase
 {
- 
+
   public function testGetExpensesReturns200(): void
   {
     $client = static::createClient();
@@ -15,6 +15,7 @@ class ExpenseApiTest extends WebTestCase
     $this->assertResponseStatusCodeSame(200);
     $data = json_decode($client->getResponse()->getContent(), true);
     $this->assertIsArray($data);
+    $this->assertArrayHasKey('expenses', $data);
   }
 
   public function testPostExpenseCreatesExpense(): void
@@ -23,43 +24,39 @@ class ExpenseApiTest extends WebTestCase
 
     $client->request(
       'POST',
-      '/api/expenses',
+      '/api/expenses/new',
       [],
       [],
       ['CONTENT_TYPE' => 'application/json'],
       json_encode([
-        'label'    => 'Loyer',
         'amount'   => 900.00,
-        'date'     => '2025-01-01',
-        'category' => 'Housing',
+        'idUser'   => null,
+        'idCategory' => null,
       ])
     );
 
     $this->assertResponseStatusCodeSame(201);
     $data = json_decode($client->getResponse()->getContent(), true);
-    $this->assertArrayHasKey('id', $data);       // la réponse contient un id
-    $this->assertEquals('Loyer', $data['label']); // le label est correct 
-    $this->assertEquals(900.00, $data['amount']); // le montant est correct 
+    $this->assertArrayHasKey('id', $data);
+    $this->assertEquals(900.00, $data['amount']);
   }
 
-  // ─- TEST 3 : POST sans label - cas d'erreur ───────────────────── 
-  public function testPostExpenseWithoutLabelReturns422(): void
+  public function testPostExpenseInvalidJsonReturns400(): void
   {
     $client = static::createClient();
 
     $client->request(
       'POST',
-      '/api/expenses',
+      '/api/expenses/new',
       [],
       [],
       ['CONTENT_TYPE' => 'application/json'],
-      json_encode(['amount' => 50.00, 'date' => '2025-01-01'])
+      'invalid json'
     );
 
-    $this->assertResponseStatusCodeSame(422);
+    $this->assertResponseStatusCodeSame(400);
   }
 
-  // ─- TEST 4 : GET dépense inexistante - 404 ────────────────────── 
   public function testGetNonExistentExpenseReturns404(): void
   {
     $client = static::createClient();

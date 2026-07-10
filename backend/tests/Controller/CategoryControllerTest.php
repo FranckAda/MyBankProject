@@ -9,7 +9,7 @@ class CategoryControllerTest extends WebTestCase
     public function testListReturnsJson(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/api/categories51');
+        $client->request('GET', '/api/categories');
         $this->assertResponseStatusCodeSame(200);
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertIsArray($data);
@@ -19,14 +19,14 @@ class CategoryControllerTest extends WebTestCase
     public function testShowNonExistentReturns404(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/api/categories51/99999');
+        $client->request('GET', '/api/categories/99999');
         $this->assertResponseStatusCodeSame(404);
     }
 
     public function testCreateWithInvalidJsonReturns400(): void
     {
         $client = static::createClient();
-        $client->request('POST', '/api/categories51/new', [], [], [
+        $client->request('POST', '/api/categories/new', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], 'invalid');
         $this->assertResponseStatusCodeSame(400);
@@ -35,7 +35,7 @@ class CategoryControllerTest extends WebTestCase
     public function testDeleteNonExistentReturns404(): void
     {
         $client = static::createClient();
-        $client->request('DELETE', '/api/categories51/99999/delete');
+        $client->request('DELETE', '/api/categories/99999/delete');
         $this->assertResponseStatusCodeSame(404);
     }
 }
