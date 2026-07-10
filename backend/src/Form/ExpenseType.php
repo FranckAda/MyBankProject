@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\Entity\Category;
 use App\Entity\Client;
 use App\Entity\Expense;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -9,16 +10,19 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ClientType extends AbstractType
+class ExpenseType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('passwordHash')
-            ->add('mail')
-            ->add('account')
-            ->add('expense', EntityType::class, [
-                'class' => Expense::class,
+            ->add('amount')
+            ->add('date')
+            ->add('idUser', EntityType::class, [
+                'class' => Client::class,
+                'choice_label' => 'id',
+            ])
+            ->add('idCategory', EntityType::class, [
+                'class' => Category::class,
                 'choice_label' => 'id',
             ])
         ;
@@ -27,7 +31,8 @@ class ClientType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Client::class,
+            'data_class' => Expense::class,
+            'csrf_protection' => false,
         ]);
     }
 }
