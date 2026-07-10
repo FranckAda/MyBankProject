@@ -89,7 +89,6 @@ describe("apiFetch", () => {
 
   it("removes token and redirects on 401", async () => {
     setToken("expired-token");
-    const assignMock = vi.fn();
     Object.defineProperty(window, "location", {
       value: { href: "" },
       writable: true,
