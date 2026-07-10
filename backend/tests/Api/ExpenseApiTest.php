@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ExpenseApiTest extends WebTestCase
 {
-  // - TEST 1 : GET /api/expenses ────────────────────────────────── 
+ 
   public function testGetExpensesReturns200(): void
   {
     $client = static::createClient();
@@ -17,7 +17,6 @@ class ExpenseApiTest extends WebTestCase
     $this->assertIsArray($data);
   }
 
-  // ─- TEST 2 : POST /api/expenses - cas nominal ─────────────────── 
   public function testPostExpenseCreatesExpense(): void
   {
     $client = static::createClient();

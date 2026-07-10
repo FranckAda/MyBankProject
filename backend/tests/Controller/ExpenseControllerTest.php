@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Tests\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+
+class ExpenseControllerTest extends WebTestCase
+{
+    public function testListReturnsJson(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/api/expenses');
+        $this->assertResponseStatusCodeSame(200);
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertIsArray($data);
+    }
+
+    public function testCreateWithoutAuthReturns401(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/api/expenses/new', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
+            'amount' => 50,
+            'idUser' => 1,
+            'idCategory' => 13,
+        ]));
+        $this->assertResponseStatusCodeSame(401);
+    }
+
+    public function testCreateWithInvalidJsonReturns400(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/api/expenses/new', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], 'not-json');
+        $this->assertResponseStatusCodeSame(400);
+    }
+
+    public function testShowNonExistentReturns404(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/api/expenses/99999');
+        $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function testDeleteNonExistentReturns404(): void
+    {
+        $client = static::createClient();
+        $client->request('DELETE', '/api/expenses/99999/delete');
+        $this->assertResponseStatusCodeSame(404);
+    }
+}
