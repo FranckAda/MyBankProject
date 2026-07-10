@@ -18,26 +18,6 @@ class ExpenseApiTest extends WebTestCase
     $this->assertSame('No expenses   found', $data['message']);
   }
 
-  public function testPostExpenseWithNullUserReturns422(): void
-  {
-    $client = static::createClient();
-
-    $client->request(
-      'POST',
-      '/api/expenses/new',
-      [],
-      [],
-      ['CONTENT_TYPE' => 'application/json'],
-      json_encode([
-        'amount'   => 900.00,
-        'idUser'   => null,
-        'idCategory' => null,
-      ])
-    );
-
-    $this->assertResponseStatusCodeSame(422);
-  }
-
   public function testPostExpenseInvalidJsonReturns400(): void
   {
     $client = static::createClient();

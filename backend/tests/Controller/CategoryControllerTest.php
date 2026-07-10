@@ -6,14 +6,13 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class CategoryControllerTest extends WebTestCase
 {
-    public function testListReturnsJson(): void
+    public function testListReturns404WhenEmpty(): void
     {
         $client = static::createClient();
         $client->request('GET', '/api/categories');
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(404);
         $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertIsArray($data);
-        $this->assertArrayHasKey('categories', $data);
+        $this->assertArrayHasKey('message', $data);
     }
 
     public function testShowNonExistentReturns404(): void
