@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use App\Repository\ExpenseRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ExpenseRepository::class)]
 class Expense
@@ -14,32 +13,24 @@ class Expense
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
-    private ?string $label = null;
-
     #[ORM\Column]
     private ?float $amount = null;
 
     #[ORM\Column(type: 'date')]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $category = null;
+    #[ORM\ManyToOne(inversedBy: 'expenses')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Client $idUser = null;
+
+    #[ORM\ManyToOne(inversedBy: 'expenses')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Category $idCategory = null;
 
     // Getters & Setters
     public function getId(): ?int
     {
         return $this->id;
-    }
-    public function getLabel(): ?string
-    {
-        return $this->label;
-    }
-    public function setLabel(string $label): static
-    {
-        $this->label = $label;
-        return $this;
     }
     public function getAmount(): ?float
     {
@@ -59,13 +50,29 @@ class Expense
         $this->date = $date;
         return $this;
     }
-    public function getCategory(): ?string
+
+    public function getIdUser(): ?Client
     {
-        return $this->category;
+        return $this->idUser;
     }
-    public function setCategory(?string $category): static
+
+    public function setIdUser(Client $idUser): static
     {
-        $this->category = $category;
+        $this->idUser = $idUser;
+
         return $this;
     }
+
+    public function getIdCategory(): ?Category
+    {
+        return $this->idCategory;
+    }
+
+    public function setIdCategory(?Category $idCategory): static
+    {
+        $this->idCategory = $idCategory;
+
+        return $this;
+    }
+   
 }
