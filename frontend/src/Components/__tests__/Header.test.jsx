@@ -2,12 +2,15 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { MemoryRouter } from "react-router-dom";
 import Header from "../Layout/Header";
+import { AuthContext } from "../../Contexts/AuthContext";
 
-// Helper : render avec le router requis par NavLink
+// Helper : render avec le router et auth requis
 const renderHeader = (initialRoute = "/") =>
   render(
     <MemoryRouter initialEntries={[initialRoute]}>
-      <Header />
+      <AuthContext.Provider value={{ user: { name: "John", lastname: "Doe", role: "client" }, logout: () => {}, loading: false }}>
+        <Header />
+      </AuthContext.Provider>
     </MemoryRouter>,
   );
 
@@ -22,8 +25,8 @@ describe("Header — affichage général", () => {
 
   it("affiche les informations de l'utilisateur (nom + rôle)", () => {
     renderHeader();
-    expect(screen.getByText("UserName")).toBeInTheDocument();
-    expect(screen.getByText("AccountType")).toBeInTheDocument();
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
+    expect(screen.getByText("client")).toBeInTheDocument();
   });
 });
 
