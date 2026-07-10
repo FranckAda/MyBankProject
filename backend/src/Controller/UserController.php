@@ -17,8 +17,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api/users')]
 final class UserController extends AbstractController
 {
-    #[Route(name: '', methods: ['GET'])]
-    #[Route('', name: '_list', methods: ['GET'])]
+    #[Route(name: 'user_list', methods: ['GET'])]
     public function list(UserRepository $userRepository): JsonResponse
     {
         $users = $userRepository->findAll();
@@ -32,7 +31,7 @@ final class UserController extends AbstractController
         return $this->json(['users' => $result]);
     }
 
-    #[Route('/{id}', name: '_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'user_show', methods: ['GET'])]
     public function show(int $id, UserRepository $userRepository): JsonResponse
     {
         $user = $userRepository->find($id);
@@ -44,7 +43,7 @@ final class UserController extends AbstractController
         return $this->json($this->userToArray($user));
     }
 
-    #[Route('/new', name: '_create', methods: ['POST'])]
+    #[Route('/new', name: 'user_create', methods: ['POST'])]
     public function create(
         Request $request,
         EntityManagerInterface $em,
@@ -90,7 +89,7 @@ final class UserController extends AbstractController
 
 
 
-    #[Route('/{id}/edit', name: '_update', methods: ['PUT', 'PATCH'])]
+    #[Route('/{id}/edit', name: 'user_update', methods: ['PUT', 'PATCH'])]
     public function update(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -123,7 +122,7 @@ final class UserController extends AbstractController
         return $this->json($this->userToArray($user));
     }
 
-    #[Route('/{id<\d+>}/delete', name: '_delete', methods: ['DELETE'])]
+    #[Route('/{id<\d+>}/delete', name: 'user_delete', methods: ['DELETE'])]
     public function delete(EntityManagerInterface $entityManager, User $user): JsonResponse
     {
         $entityManager->remove($user);

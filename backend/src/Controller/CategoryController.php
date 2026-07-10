@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/api/categories')]
 final class CategoryController extends AbstractController
 {
-    #[Route(name: '', methods: ['GET'])]
+    #[Route(name: 'category_list', methods: ['GET'])]
     public function list(CategoryRepository $categoryRepository): JsonResponse
     {
         $categories = $categoryRepository->findAll();
@@ -27,7 +27,7 @@ final class CategoryController extends AbstractController
 
         return $this->json(['categories' => $result]);
     }
-    #[Route('/new', name: '_create', methods: ['POST'])]
+    #[Route('/new', name: 'category_create', methods: ['POST'])]
     public function create(
         Request $request,
         EntityManagerInterface $em,
@@ -52,7 +52,7 @@ final class CategoryController extends AbstractController
         return $this->json($this->categoryToArray($category), 201);
     }
 
-    #[Route('/{id}', name: '_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'category_show', methods: ['GET'])]
     public function show(int $id, CategoryRepository $categoryRepository): JsonResponse
     {
         $category = $categoryRepository->find($id);
@@ -65,7 +65,7 @@ final class CategoryController extends AbstractController
     }
 
 
-    #[Route('/{id}/edit', name: '_update', methods: ['PUT', 'PATCH'])]
+    #[Route('/{id}/edit', name: 'category_update', methods: ['PUT', 'PATCH'])]
     public function update(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -91,7 +91,7 @@ final class CategoryController extends AbstractController
         return $this->json($this->categoryToArray($category));
     }
 
-    #[Route('/{id<\d+>}/delete', name: '_delete', methods: ['DELETE'])]
+    #[Route('/{id<\d+>}/delete', name: 'category_delete', methods: ['DELETE'])]
     public function delete(EntityManagerInterface $entityManager, Category $category): JsonResponse
     {
         $entityManager->remove($category);

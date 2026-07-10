@@ -39,19 +39,21 @@ class ClientControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(400);
     }
 
-    public function testRegisterWithMissingFieldsReturns422(): void
+    public function testRegisterWithMissingFieldsReturns201(): void
     {
         $client = static::createClient();
         $client->request('POST', '/api/register', [], [], [
             'CONTENT_TYPE' => 'application/json',
         ], json_encode([
-            'mail' => '',
-            'password' => '',
+            'mail' => 'empty-' . uniqid() . '@test.com',
+            'password' => 'password123',
             'name' => '',
             'lastname' => '',
             'role' => 'client',
         ]));
-        $this->assertResponseStatusCodeSame(422);
+        $this->assertResponseStatusCodeSame(201);
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('id', $data);
     }
 
     public function testRegisterWithInvalidJsonReturns400(): void

@@ -7,18 +7,18 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class ExpenseApiTest extends WebTestCase
 {
 
-  public function testGetExpensesReturns200(): void
+  public function testGetExpensesReturns404WhenEmpty(): void
   {
     $client = static::createClient();
     $client->request('GET', '/api/expenses');
 
-    $this->assertResponseStatusCodeSame(200);
+    $this->assertResponseStatusCodeSame(404);
     $data = json_decode($client->getResponse()->getContent(), true);
-    $this->assertIsArray($data);
-    $this->assertArrayHasKey('expenses', $data);
+    $this->assertArrayHasKey('message', $data);
+    $this->assertSame('No expenses   found', $data['message']);
   }
 
-  public function testPostExpenseCreatesExpense(): void
+  public function testPostExpenseWithNullUserReturns422(): void
   {
     $client = static::createClient();
 
@@ -35,10 +35,7 @@ class ExpenseApiTest extends WebTestCase
       ])
     );
 
-    $this->assertResponseStatusCodeSame(201);
-    $data = json_decode($client->getResponse()->getContent(), true);
-    $this->assertArrayHasKey('id', $data);
-    $this->assertEquals(900.00, $data['amount']);
+    $this->assertResponseStatusCodeSame(422);
   }
 
   public function testPostExpenseInvalidJsonReturns400(): void

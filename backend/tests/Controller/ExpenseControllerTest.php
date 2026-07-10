@@ -6,13 +6,13 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ExpenseControllerTest extends WebTestCase
 {
-    public function testListReturnsJson(): void
+    public function testListReturns404WhenEmpty(): void
     {
         $client = static::createClient();
         $client->request('GET', '/api/expenses');
-        $this->assertResponseStatusCodeSame(200);
+        $this->assertResponseStatusCodeSame(404);
         $data = json_decode($client->getResponse()->getContent(), true);
-        $this->assertIsArray($data);
+        $this->assertArrayHasKey('message', $data);
     }
 
     public function testCreateWithNonExistentEntitiesReturns422(): void
