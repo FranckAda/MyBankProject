@@ -1,10 +1,12 @@
-import { Bell, Settings } from "lucide-react";
+import { Bell, BellRing, Settings } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../Contexts/useAuth";
 
 export default function TopBar({
-  title = "Bonjour, UserName",
+  title = "Bonjour",
   subtitle = "Welcome to myBank",
 }) {
+  const { hasNewActivity } = useAuth();
   return (
     <header className="bg-teal-700 lg:bg-white lg:border-b lg:border-gray-100 px-4 md:px-8 pt-10 lg:pt-0 pb-5 lg:py-4 flex items-center justify-between lg:sticky lg:top-0 lg:z-10">
       <div>
@@ -18,7 +20,7 @@ export default function TopBar({
           to="/notifications"
           className="text-white lg:text-gray-500 hover:text-teal-200 lg:hover:text-teal-600 transition-colors"
         >
-          <Bell size={22} />
+          {hasNewActivity ? <BellRing size={22} /> : <Bell size={22} />}
         </NavLink>
         <NavLink
           to="/profile"

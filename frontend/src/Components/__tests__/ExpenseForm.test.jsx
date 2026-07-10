@@ -1,13 +1,26 @@
 import { render, screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest"; // ou 'jest' si vous n'utilisez pas Vitest
+import { describe, it, expect } from "vitest";
+import { MemoryRouter } from "react-router-dom";
 import ExpenseForm from "../ExpenseForm";
+import { AuthContext } from "../../Contexts/AuthContext";
+
+const mockUser = {
+  id: 1,
+  name: "John",
+  account: 500,
+  categories: [{ id: 13, name: "Alimentation" }],
+};
 
 describe("ExpenseForm — affichage", () => {
   it("affiche les champs du formulaire", () => {
-    render(<ExpenseForm />);
-    // Vérifier que le champ montant est présent
-    expect(screen.getByLabelText(/amount/i)).toBeInTheDocument();
-    // Vérifier que le bouton de soumission est présent
-    expect(screen.getByRole("button", { name: /add/i })).toBeInTheDocument();
+    render(
+      <MemoryRouter>
+        <AuthContext.Provider value={{ user: mockUser, setHasNewActivity: () => {}, fetchUser: async () => {}, loading: false }}>
+          <ExpenseForm />
+        </AuthContext.Provider>
+      </MemoryRouter>,
+    );
+    expect(screen.getByText("Montant (€)")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /send/i })).toBeInTheDocument();
   });
 });

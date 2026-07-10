@@ -22,5 +22,9 @@ RUN rm .env
 
 # composer install lancera cache:clear automatiquement en prod
 
-EXPOSE 8000
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+EXPOSE 9000
+CMD ["php-fpm"]
