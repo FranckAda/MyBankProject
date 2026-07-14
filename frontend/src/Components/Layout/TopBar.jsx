@@ -16,7 +16,7 @@ export default function TopBar({
         <p className="text-teal-200 lg:text-gray-400 text-sm">{subtitle}</p>
       </div>
       <div className="flex gap-3">
-        {user?.role !== "client" && (
+        {user?.role === "client" && (
           <NavLink
             to="/notifications"
             className="text-white lg:text-gray-500 hover:text-teal-200 lg:hover:text-teal-600 transition-colors"
