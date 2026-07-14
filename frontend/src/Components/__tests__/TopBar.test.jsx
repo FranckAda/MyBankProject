@@ -4,9 +4,9 @@ import { MemoryRouter } from "react-router-dom";
 import TopBar from "../Layout/TopBar";
 import { AuthContext } from "../../Contexts/AuthContext";
 
-const renderTopBar = (props = {}, initialRoute = "/") =>
+const renderTopBar = (props = {}, initialRoute = "/", user = null) =>
   render(
-    <AuthContext.Provider value={{ hasNewActivity: false, setHasNewActivity: () => {}, user: null, loading: false }}>
+    <AuthContext.Provider value={{ hasNewActivity: false, setHasNewActivity: () => {}, user, loading: false }}>
       <MemoryRouter initialEntries={[initialRoute]}>
         <TopBar {...props} />
       </MemoryRouter>
@@ -34,17 +34,19 @@ describe("TopBar — affichage général", () => {
 });
 
 describe("TopBar — liens de navigation", () => {
-  it("affiche les liens notifications et profil", () => {
-    renderTopBar();
-    const links = screen.getAllByRole("link");
-    expect(links).toHaveLength(2);
-  });
-
-  it("les liens pointent vers les bonnes routes", () => {
-    renderTopBar();
+  it("affiche le lien profil pour tout utilisateur", () => {
+    renderTopBar({}, "/", { role: "admin" });
     const links = screen.getAllByRole("link");
     const hrefs = links.map((l) => l.getAttribute("href"));
+    expect(hrefs).toContain("/profile");
+    expect(hrefs).not.toContain("/notifications");
+  });
 
+  it("affiche les liens notifications et profil pour un client", () => {
+    renderTopBar({}, "/", { role: "client" });
+    const links = screen.getAllByRole("link");
+    expect(links).toHaveLength(2);
+    const hrefs = links.map((l) => l.getAttribute("href"));
     expect(hrefs).toContain("/notifications");
     expect(hrefs).toContain("/profile");
   });
