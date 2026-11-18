@@ -46,9 +46,11 @@ services:
     volumes:
       - db-data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -prootsecret --silent"]
+      interval: 5s
       timeout: 10s
-      retries: 5
+      retries: 30
+      start_period: 30s
     networks:
       - mybank-net
   phpmyadmin:
