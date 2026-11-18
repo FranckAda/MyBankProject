@@ -54,7 +54,7 @@ services:
     networks:
       - mybank-net
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin:5
     restart: always
     ports:
       - "8080:80"
