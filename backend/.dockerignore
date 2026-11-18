@@ -1,0 +1,13 @@
+.git
+.env
+.env.local
+.env.*.local
+vendor/
+var/
+node_modules/
+config/jwt/*.pem
+public/bundles/
+public/assets/
+assets/vendor/
+*.log
+.DS_Store
