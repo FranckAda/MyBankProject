@@ -92,6 +92,36 @@ describe("Login - Register mode", () => {
     ).toBeInTheDocument();
   });
 
+  it("rejects a weak password before calling register", async () => {
+    const register = vi.fn().mockResolvedValue({});
+    renderLogin({ register });
+    fireEvent.click(screen.getByText(/don't have an account/i));
+
+    fireEvent.change(screen.getByPlaceholderText("John"), {
+      target: { value: "John" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Doe"), {
+      target: { value: "Doe" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("you@example.com"), {
+      target: { value: "john@test.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Enter your password"), {
+      target: { value: "ab" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Confirm your password"), {
+      target: { value: "ab" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /create account/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Password must be at least 8 characters"),
+      ).toBeInTheDocument();
+    });
+    expect(register).not.toHaveBeenCalled();
+  });
+
   it("validates password confirmation in register mode", async () => {
     renderLogin();
     fireEvent.click(screen.getByText(/don't have an account/i));
@@ -106,7 +136,7 @@ describe("Login - Register mode", () => {
       target: { value: "john@test.com" },
     });
     fireEvent.change(screen.getByPlaceholderText("Enter your password"), {
-      target: { value: "pass123" },
+      target: { value: "pass1234" },
     });
     fireEvent.change(screen.getByPlaceholderText("Confirm your password"), {
       target: { value: "different" },
@@ -134,17 +164,17 @@ describe("Login - Register mode", () => {
       target: { value: "john@test.com" },
     });
     fireEvent.change(screen.getByPlaceholderText("Enter your password"), {
-      target: { value: "pass123" },
+      target: { value: "pass1234" },
     });
     fireEvent.change(screen.getByPlaceholderText("Confirm your password"), {
-      target: { value: "pass123" },
+      target: { value: "pass1234" },
     });
     fireEvent.click(screen.getByRole("button", { name: /create account/i }));
 
     await waitFor(() => {
       expect(register).toHaveBeenCalledWith({
         mail: "john@test.com",
-        password: "pass123",
+        password: "pass1234",
         name: "John",
         lastname: "Doe",
       });

@@ -25,6 +25,21 @@ class AuthControllerTest extends WebTestCase
         $this->assertResponseStatusCodeSame(401);
     }
 
+    public function testRegisterRejectsWeakPassword(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/api/register', [], [], [
+            'CONTENT_TYPE' => 'application/json',
+        ], json_encode([
+            'mail' => 'weak-' . uniqid() . '@test.com',
+            'password' => 'ab',
+            'name' => 'Test',
+            'lastname' => 'User',
+            'role' => 'client',
+        ]));
+        $this->assertResponseStatusCodeSame(422);
+    }
+
     public function testRegisterCreatesUser(): void
     {
         $client = static::createClient();
@@ -32,7 +47,7 @@ class AuthControllerTest extends WebTestCase
             'CONTENT_TYPE' => 'application/json',
         ], json_encode([
             'mail' => 'new-user-' . uniqid() . '@test.com',
-            'password' => 'securepass',
+            'password' => 'securepass1',
             'name' => 'Test',
             'lastname' => 'User',
             'role' => 'client',
