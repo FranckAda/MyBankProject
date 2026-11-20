@@ -29,6 +29,7 @@ import TopBar from "../Layout/TopBar";
 import ExpenseList from "../ExpenseList";
 import { apiFetch } from "../../lib/api";
 import { useAuth } from "../../Contexts/useAuth";
+import { validatePassword } from "../../lib/password";
 
 const quickActions = [
   { label: "Wallet", Icon: Wallet, bg: "bg-teal-700", text: "text-white" },
@@ -146,6 +147,13 @@ const Dashboard = () => {
     try {
       setSavingId(userId);
       setError("");
+
+      if (formData.password) {
+        const passwordError = validatePassword(formData.password);
+        if (passwordError) {
+          throw new Error(passwordError);
+        }
+      }
 
       const payload = {
         mail: formData.mail.trim(),

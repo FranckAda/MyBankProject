@@ -4,6 +4,7 @@ import Header from "../Layout/Header";
 import TopBar from "../Layout/TopBar";
 import { useAuth } from "../../Contexts/useAuth";
 import { apiFetch } from "../../lib/api";
+import { PASSWORD_HINT, PASSWORD_MIN_LENGTH, validatePassword } from "../../lib/password";
 
 const Profile = () => {
   const { user, fetchUser } = useAuth();
@@ -31,6 +32,15 @@ const Profile = () => {
       setMessage("Passwords do not match");
       setSaving(false);
       return;
+    }
+
+    if (formData.password) {
+      const passwordError = validatePassword(formData.password);
+      if (passwordError) {
+        setMessage(passwordError);
+        setSaving(false);
+        return;
+      }
     }
 
     try {
@@ -133,9 +143,12 @@ const Profile = () => {
                   type="password"
                   value={formData.password}
                   onChange={handleChange}
+                  minLength={PASSWORD_MIN_LENGTH}
+                  autoComplete="new-password"
                   className="h-10 border border-gray-200 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600"
                   placeholder="••••••••"
                 />
+                <p className="text-xs text-gray-400">{PASSWORD_HINT}</p>
               </div>
 
               <div className="flex flex-col gap-1.5">

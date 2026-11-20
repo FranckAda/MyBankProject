@@ -6,6 +6,7 @@ use App\Entity\Admin;
 use App\Entity\Client;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Security\PasswordPolicy;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -113,6 +114,9 @@ final class UserController extends AbstractController
         }
 
         if (!empty($data['password'])) {
+            if (!PasswordPolicy::isValid($data['password'])) {
+                return $this->json(['error' => PasswordPolicy::ERROR_MESSAGE], 422);
+            }
             $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
             $user->setPasswordHash($hashedPassword);
         }

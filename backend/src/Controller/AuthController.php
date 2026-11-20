@@ -7,6 +7,7 @@ use App\Entity\Category;
 use App\Entity\Client;
 use App\Entity\Expense;
 use App\Entity\User;
+use App\Security\PasswordPolicy;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -104,6 +105,10 @@ final class AuthController extends AbstractController
         $name = $data['name'] ?? '';
         $lastname = $data['lastname'] ?? '';
         $role = strtolower($data['role'] ?? 'client');
+
+        if (!PasswordPolicy::isValid($password)) {
+            return $this->json(['error' => PasswordPolicy::ERROR_MESSAGE], 422);
+        }
 
         if (!in_array($role, ['admin', 'client'])) {
             return $this->json(['error' => 'Invalid role'], 400);

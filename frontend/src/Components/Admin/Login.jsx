@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../Contexts/useAuth";
+import {
+  PASSWORD_HINT,
+  PASSWORD_MIN_LENGTH,
+  validatePassword,
+} from "../../lib/password";
 
 export default function Login() {
   const [isRegister, setIsRegister] = useState(false);
@@ -23,6 +28,15 @@ export default function Login() {
       setError("Passwords do not match");
       setLoading(false);
       return;
+    }
+
+    if (isRegister) {
+      const passwordError = validatePassword(password);
+      if (passwordError) {
+        setError(passwordError);
+        setLoading(false);
+        return;
+      }
     }
 
     try {
@@ -116,9 +130,14 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={isRegister ? PASSWORD_MIN_LENGTH : undefined}
+              autoComplete={isRegister ? "new-password" : "current-password"}
               className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm"
               placeholder="Enter your password"
             />
+            {isRegister && (
+              <p className="mt-1 text-xs text-gray-400">{PASSWORD_HINT}</p>
+            )}
           </div>
 
           {isRegister && (
