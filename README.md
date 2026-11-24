@@ -2,6 +2,8 @@
 
 Application bancaire fullstack — React 19 / Symfony 8 / MySQL 8
 
+**Documentation :** [Déploiement en production sur Google Cloud](DEPLOY.md)
+
 ## Stack
 
 - **Frontend** : React 19 + Vite + Tailwind 4 + React Router 7
