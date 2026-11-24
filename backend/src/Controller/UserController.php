@@ -14,10 +14,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/users')]
 final class UserController extends AbstractController
 {
+    #[IsGranted('ROLE_ADMIN')]
     #[Route(name: 'user_list', methods: ['GET'])]
     public function list(UserRepository $userRepository): JsonResponse
     {
@@ -32,6 +34,7 @@ final class UserController extends AbstractController
         return $this->json(['users' => $result]);
     }
 
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/{id}', name: 'user_show', methods: ['GET'])]
     public function show(int $id, UserRepository $userRepository): JsonResponse
     {
@@ -44,6 +47,7 @@ final class UserController extends AbstractController
         return $this->json($this->userToArray($user));
     }
 
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/new', name: 'user_create', methods: ['POST'])]
     public function create(
         Request $request,
@@ -103,6 +107,16 @@ final class UserController extends AbstractController
             return $this->json(['error' => 'Invalid JSON: ' . json_last_error_msg()], 400);
         }
 
+        // A client may only edit his own profile; an admin may edit anyone.
+        // The identity comes from the JWT token, never from the request body.
+        $currentUser = $this->getUser();
+        if (
+            !$this->isGranted('ROLE_ADMIN')
+            && (null === $currentUser || $currentUser->getUserIdentifier() !== $user->getMail())
+        ) {
+            return $this->json(['message' => 'Access denied'], 403);
+        }
+
         $form = $this->createForm(UserType::class, $user);
         $clearMissing = $request->getMethod() !== 'PATCH';
         $form->submit($data, $clearMissing);
@@ -126,6 +140,7 @@ final class UserController extends AbstractController
         return $this->json($this->userToArray($user));
     }
 
+    #[IsGranted('ROLE_ADMIN')]
     #[Route('/{id<\d+>}/delete', name: 'user_delete', methods: ['DELETE'])]
     public function delete(EntityManagerInterface $entityManager, User $user): JsonResponse
     {
