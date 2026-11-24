@@ -8,6 +8,10 @@ if (method_exists(Dotenv::class, 'bootEnv')) {
     (new Dotenv())->bootEnv(dirname(__DIR__).'/.env');
 }
 
+// PHPUnit force APP_ENV=test via $_SERVER, but Dotenv sets $_ENV from .env (dev).
+// Symfony's Kernel reads $_ENV first, so keep both in sync to really load config/packages/test/.
+$_ENV['APP_ENV'] = $_SERVER['APP_ENV'] = 'test';
+
 if ($_SERVER['APP_DEBUG']) {
     umask(0000);
 }
