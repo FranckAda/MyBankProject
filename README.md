@@ -46,6 +46,10 @@ docker compose exec backend php bin/console doctrine:migrations:migrate --no-int
 docker compose exec backend php bin/console doctrine:fixtures:load --no-interaction
 ```
 
+Les fixtures créent un compte admin de développement : **`admin@mybank.local` / `Admin1234`**.
+L’inscription publique ne permet plus de créer un admin ; les autres comptes admin se créent
+depuis le dashboard avec ce compte, via `POST /api/users/new`.
+
 ### URLs
 
 | Service | URL |
