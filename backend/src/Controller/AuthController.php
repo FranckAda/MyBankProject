@@ -106,12 +106,21 @@ final class AuthController extends AbstractController
         $lastname = $data['lastname'] ?? '';
         $role = strtolower($data['role'] ?? 'client');
 
-        if (!PasswordPolicy::isValid($password)) {
-            return $this->json(['error' => PasswordPolicy::ERROR_MESSAGE], 422);
+        // Public registration must never create an admin: the role comes from the
+        // request body, so a client could otherwise grant himself admin access.
+        // Admins are created by another admin through /api/users/new.
+        if ($role === 'admin') {
+            return $this->json([
+                'message' => 'Admin accounts cannot be created through public registration',
+            ], 403);
         }
 
-        if (!in_array($role, ['admin', 'client'])) {
+        if ($role !== 'client') {
             return $this->json(['error' => 'Invalid role'], 400);
+        }
+
+        if (!PasswordPolicy::isValid($password)) {
+            return $this->json(['error' => PasswordPolicy::ERROR_MESSAGE], 422);
         }
 
         $existing = $em->getRepository(User::class)->findOneBy(['mail' => $mail]);
@@ -119,14 +128,11 @@ final class AuthController extends AbstractController
             return $this->json(['error' => 'Email already registered'], 409);
         }
 
-        $user = $role === 'admin' ? new Admin() : new Client();
+        $user = new Client();
         $user->setMail($mail);
         $user->setName($name);
         $user->setLastname($lastname);
-
-        if ($user instanceof Client) {
-            $user->setAccount(100);
-        }
+        $user->setAccount(100);
 
         $errors = $validator->validate($user);
         if (count($errors) > 0) {
