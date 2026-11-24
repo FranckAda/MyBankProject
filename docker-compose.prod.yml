@@ -1,0 +1,99 @@
+# Production stack: only Caddy is exposed (80/443). MySQL, PHP-FPM and the
+# internal nginx stay on the private network.
+# Usage:
+#   docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build
+
+name: mybank-prod
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - frontend
+    restart: unless-stopped
+    networks:
+      - mybank-net
+
+  frontend:
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - nginx
+    restart: unless-stopped
+    networks:
+      - mybank-net
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./backend:/var/www/html:ro
+      - ./backend/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - mybank-net
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: 0
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+      CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN}
+      DEFAULT_URI: ${DEFAULT_URI}
+      MAILER_DSN: ${MAILER_DSN:-null://null}
+      MESSENGER_TRANSPORT_DSN: doctrine://default?auto_setup=0
+      JWT_SECRET_KEY: /var/www/html/config/jwt/private.pem
+      JWT_PUBLIC_KEY: /var/www/html/config/jwt/public.pem
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE}
+      JWT_TTL: 3600
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - mybank-net
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 5s
+      timeout: 10s
+      retries: 30
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - mybank-net
+
+volumes:
+  db-data:
+  caddy-data:
+  caddy-config:
+
+networks:
+  mybank-net:
+    driver: bridge

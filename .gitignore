@@ -1,0 +1,11 @@
+# Secrets de production (jamais committer)
+.env.prod
+.env.prod.*
+!.env.prod.example
+
+# Sauvegardes locales
+*.sql
+*.sql.gz
+
+# macOS
+.DS_Store
