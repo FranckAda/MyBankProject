@@ -1,0 +1,4 @@
+# The base framework.yaml enables test: true for the dev/test tooling.
+# Never expose the test client in production.
+framework:
+    test: false
