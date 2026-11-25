@@ -52,6 +52,9 @@ Les fixtures créent un compte admin de développement : **`admin@mybank.local` 
 L’inscription publique ne permet plus de créer un admin ; les autres comptes admin se créent
 depuis le dashboard avec ce compte, via `POST /api/users/new`.
 
+En production, ne pas lancer les fixtures : les catégories sont créées par la migration
+`Version20261125000000` et le premier admin par `app:create-admin`. Voir [DEPLOY.md](DEPLOY.md).
+
 ### URLs
 
 | Service | URL |

@@ -208,7 +208,9 @@ $C exec backend php bin/console cache:warmup --env=prod
 ```
 
 **Ne lance jamais `doctrine:fixtures:load` en prod** : la fixture contient un compte admin avec
-un mot de passe connu (`Admin1234`).
+un mot de passe connu (`Admin1234`) et la commande purge la base. Les 12 catégories par défaut sont
+désormais créées par la migration `Version20261125000000`, donc `doctrine:migrations:migrate`
+suffit — aucune commande de fixtures en production.
 
 ---
 
